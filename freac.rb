@@ -28,15 +28,15 @@ class Binder < Parser
         super()
     end
     def check(input)
-        r1, rest = result = @p1.check(input)
-        return [nil, input] if not r1
-        self.scope[@p1.name] = r1 if @p1.name
+        r, rest = result = @p1.check(input)
+        return [nil, input] if not r
+        self.scope[@p1.name] = r if @p1.name
 
-        r2, rest = result = @p2.check(rest)
-        return [nil, input] if not r2
-        self.scope[@p1.name] = r2 if @p1.name
+        r, rest = result = @p2.check(rest)
+        return [nil, input] if not r
+        self.scope[@p1.name] = r if @p1.name
 
-        return [r2, rest]
+        return [r, rest]
     end
 end
 
