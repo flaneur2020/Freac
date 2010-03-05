@@ -1,9 +1,7 @@
 class Parser
     attr_accessor :name
-    attr_accessor :scope
     def initialize
         @name=nil
-        @scope||={}
     end
     def check(input)
     end
@@ -30,11 +28,13 @@ class Binder < Parser
     end
     def check(input)
         rest = input 
+        scope = {}
         for p in @ps
             r, rest = result = p.check(rest)
             return [nil, input] if not r
-            self.scope[p.name] = r if p.name
+            scope[p.name] = r if p.name
         end
+        result << scope
 
         return result
     end
@@ -70,23 +70,23 @@ class FreacDSL < Parser
     def initialize(&blc)
         @ps=[]
         super()
-        self.scope={}
         
         instance_eval(&blc) if blc
     end
     def check(input)
         p = Binder.new(*@ps)
-        r = p.check(input)
-        self.scope = p.scope
-        return r
+        r, input, scope = result = p.check(input)
+        return result
     end
     def char(c)
         p = Atom.new(lambda {|ec|
             ec==c
         })
-        p.scope = self.scope
         @ps << p
         return p
+    end
+    def def_parser
+        yield 
     end
 end
 
