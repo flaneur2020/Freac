@@ -95,6 +95,8 @@ class Symbol
     def <=(other)
         return super(other) if not Parser===other
         other.name=self
+        puts "+++++++++"
+        print self
         return other
     end
 end
