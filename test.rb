@@ -40,10 +40,11 @@ class FCTest < Test::Unit::TestCase
         p1 = FreacDSL.new {
             :a <= char('a')
             :b <= char('b')
+            :c <= char('c')
         }
         puts "!!!!!!!!!!"
-        ase ['b', ''], p1.check('ab')
-        ase 2, p1.scope.size
+        ase ['c', ''], p1.check('abc')
+        ase 3, p1.scope.size
     end
 
     def ase(e, v)

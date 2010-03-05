@@ -24,21 +24,18 @@ class Atom < Parser
 end
 
 class Binder < Parser
-    def initialize(p1, p2)
-        @p1, @p2 = [p1, p2]
+    def initialize(*ps)
+        @ps = ps
         super()
     end
     def check(input)
         rest = input 
-        for p in [@p1, @p2]
+        for p in @ps
             r, rest = result = p.check(rest)
             return [nil, input] if not r
             self.scope[p.name] = r if p.name
         end
 
-        puts @p1.name
-        puts @p2.name
-        puts "****"
         return result
     end
 end
@@ -71,22 +68,25 @@ end
 # }
 class FreacDSL < Parser
     def initialize(&blc)
-        @rp=nil
+        @ps=[]
         super()
         self.scope={}
         
         instance_eval(&blc) if blc
     end
     def check(input)
-        @rp.check(input)
+        p = Binder.new(*@ps)
+        r = p.check(input)
+        self.scope = p.scope
+        return r
     end
     def char(c)
         p = Atom.new(lambda {|ec|
             ec==c
         })
         p.scope = self.scope
-        return @rp = p if @rp==nil
-        return @rp = Binder.new(@rp, p)
+        @ps << p
+        return p
     end
 end
 
@@ -95,8 +95,6 @@ class Symbol
     def <=(other)
         return super(other) if not Parser===other
         other.name=self
-        puts "+++++++++"
-        print self
         return other
     end
 end
