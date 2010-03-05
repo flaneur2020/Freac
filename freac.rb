@@ -3,7 +3,7 @@ class Parser
     attr_accessor :scope
     def initialize
         @name=nil
-        @scope={}
+        @scope||={}
     end
     def check(input)
     end
@@ -36,6 +36,9 @@ class Binder < Parser
             self.scope[p.name] = r if p.name
         end
 
+        puts @p1.name
+        puts @p2.name
+        puts "****"
         return result
     end
 end
@@ -70,6 +73,8 @@ class FreacDSL < Parser
     def initialize(&blc)
         @rp=nil
         super()
+        self.scope={}
+        
         instance_eval(&blc) if blc
     end
     def check(input)

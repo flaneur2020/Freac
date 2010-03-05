@@ -30,11 +30,18 @@ class FCTest < Test::Unit::TestCase
         ase [nil, 'x'], p3.check('x')
     end
 
+    def test_name
+        p1 = :x <= char('a')
+        ase :x, p1.name
+    end
+
     def test_dsl
+        puts "test_dsl"
         p1 = FreacDSL.new {
             :a <= char('a')
             :b <= char('b')
         }
+        puts "!!!!!!!!!!"
         ase ['b', ''], p1.check('ab')
         ase 2, p1.scope.size
     end
