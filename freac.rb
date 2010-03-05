@@ -8,8 +8,8 @@ class Parser
 end
 
 class Atom < Parser
-    def initialize(p)
-        @p=p
+    def initialize(&blc)
+        @p=blc
         super()
     end
     def check(input)
@@ -55,9 +55,9 @@ class Brancher < Parser
 end
 
 def char(c)
-    return Atom.new(lambda {|ec| 
+    return Atom.new{|ec| 
         ec==c
-    })
+    }
 end
 
 # 
@@ -79,14 +79,14 @@ class FreacDSL < Parser
         return result
     end
     def char(c)
-        p = Atom.new(lambda {|ec|
-            ec==c
-        })
-        @ps << p
-        return p
+        def_parser { 
+            Atom.new{|ec| ec==c }
+        }
     end
     def def_parser
-        yield 
+        p = yield 
+        @ps << p
+        return p
     end
 end
 

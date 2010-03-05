@@ -18,8 +18,8 @@ class FCTest < Test::Unit::TestCase
         p1 = char 'a'
         p2 = char 'b'
         p3 = Binder.new(p1, p2)
-        ase ['b', ''], p3.check('ab')
-        asne ['b', ''], p3.check('aa')
+        ase ['b', ''], p3.check('ab')[0..1]
+        asne ['b', ''], p3.check('aa')[0..1]
     end
 
     def test_brancher
@@ -43,8 +43,7 @@ class FCTest < Test::Unit::TestCase
             :c <= char('c')
         }
         puts "!!!!!!!!!!"
-        ase ['c', ''], p1.check('abc')
-        ase 3, p1.scope.size
+        ase ['c', ''], p1.check('abc')[0..1]
     end
 
     def ase(e, v)
