@@ -12,6 +12,7 @@ end
 class Atom < Parser
     def initialize(p)
         @p=p
+        super()
     end
     def check(input)
         return [nil, ''] if input==""
@@ -28,21 +29,21 @@ class Binder < Parser
         super()
     end
     def check(input)
-        r, rest = result = @p1.check(input)
-        return [nil, input] if not r
-        self.scope[@p1.name] = r if @p1.name
+        rest = input 
+        for p in [@p1, @p2]
+            r, rest = result = p.check(rest)
+            return [nil, input] if not r
+            self.scope[p.name] = r if p.name
+        end
 
-        r, rest = result = @p2.check(rest)
-        return [nil, input] if not r
-        self.scope[@p1.name] = r if @p1.name
-
-        return [r, rest]
+        return result
     end
 end
 
 class Brancher < Parser
     def initialize(p1, p2)
         @p1, @p2 = [p1, p2]
+        super()
     end
     def check(input)
         r1, rest = @p1.check(input)
@@ -68,6 +69,7 @@ end
 class FreacDSL < Parser
     def initialize(&blc)
         @rp=nil
+        super()
         instance_eval(&blc) if blc
     end
     def check(input)
