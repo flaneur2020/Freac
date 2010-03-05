@@ -30,6 +30,14 @@ class FCTest < Test::Unit::TestCase
         ase [nil, 'x'], p3.check('x')
     end
 
+    def test_dsl
+        p1 = FreacDSL.new {
+            :a <= char('a')
+            :b <= char('b')
+        }
+        ase ['b', ''], p1.check('ab')
+    end
+
     def ase(e, v)
         assert_equal(e, v)
     end
@@ -37,4 +45,4 @@ class FCTest < Test::Unit::TestCase
         assert_not_equal(e, v)
     end
 end
-    
+

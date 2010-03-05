@@ -1,9 +1,15 @@
 class Parser
+    attr_accessor :name
+    attr_accessor :scope
+    def initialize
+        @name=nil
+        @scope={}
+    end
     def check(input)
     end
 end
 
-class Sater < Parser
+class Atom < Parser
     def initialize(p)
         @p=p
     end
@@ -16,21 +22,20 @@ class Sater < Parser
     end
 end
 
-def char(c)
-    return Sater.new(lambda {|ec| 
-        ec==c
-    })
-end
-
 class Binder < Parser
     def initialize(p1, p2)
         @p1, @p2 = [p1, p2]
+        super()
     end
     def check(input)
-        r1, rest = @p1.check(input)
+        r1, rest = result = @p1.check(input)
         return [nil, input] if not r1
-        r2, rest = @p2.check(rest)
+        self.scope[@p1.name] = r1 if @p1.name
+
+        r2, rest = result = @p2.check(rest)
         return [nil, input] if not r2
+        self.scope[@p1.name] = r2 if @p1.name
+
         return [r2, rest]
     end
 end
@@ -47,3 +52,43 @@ class Brancher < Parser
         return [nil, input]
     end
 end
+
+def char(c)
+    return Atom.new(lambda {|ec| 
+        ec==c
+    })
+end
+
+# 
+# p2 = syn {
+#   char 'a'
+#   char 'b'
+#   char 'c'
+# }
+class FreacDSL < Parser
+    def initialize(&blc)
+        @rp=nil
+        instance_eval(&blc) if blc
+    end
+    def check(input)
+        @rp.check(input)
+    end
+    def char(c)
+        p = Atom.new(lambda {|ec|
+            ec==c
+        })
+        p.scope = self.scope
+        return @rp = p if @rp==nil
+        return @rp = Binder.new(@rp, p)
+    end
+end
+
+    
+class Symbol
+    def <=(other)
+        return super(other) if not Parser===other
+        other.name=self
+        return other
+    end
+end
+
