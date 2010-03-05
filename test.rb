@@ -36,6 +36,7 @@ class FCTest < Test::Unit::TestCase
             :b <= char('b')
         }
         ase ['b', ''], p1.check('ab')
+        ase 2, p1.scope.size
     end
 
     def ase(e, v)
