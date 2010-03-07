@@ -1,9 +1,32 @@
 class Parser
     attr_accessor :name
+    attr_accessor :parent
+
     def initialize
         @name=nil
+        @expected||=''
+        @parent=nil
     end
+
     def check(input)
+    end
+
+    def |(other)
+        super(other) unless Parser === other 
+        Brancher.new(self, other)
+    end
+
+    def expected(val=nil)
+        if val
+            @expected = val
+            return self
+        end
+        return @expected
+    end
+
+    def error(input, inferer)
+        inferer||='' 
+        return [nil, input, expected, inferer]
     end
 end
 
@@ -13,30 +36,106 @@ class Atom < Parser
         super()
     end
     def check(input)
-        return [nil, ''] if input==""
+        return error(input, "") if input==""
         x, xs = [input[0..0], input[1..-1]]
         if @p.call(x)
             return [x, xs]
+        else
+            return error(input, input)
         end
     end
 end
 
 class Binder < Parser
-    def initialize(*ps)
-        @ps = ps
+    def initialize(*ps, &blc)
         super()
+        @ps = ps
+        ret = instance_eval(&blc) if blc
+        @ret_blc = ret if String === ret
     end
+    attr_accessor :ps
     def check(input)
         rest = input 
         scope = {}
         for p in @ps
             r, rest = result = p.check(rest)
-            return [nil, input] if not r
+            return error(input, rest) if not r
             scope[p.name] = r if p.name
         end
-        result << scope
-
+        if @ret_blc
+            ret = eval @ret_blc, closure(scope)
+            result[0] = ret
+        end
+        
         return result
+    end
+
+    def char(ec)
+        make_parser{ 
+            Atom.new{|ic| ec==ic }
+        }.expected(ec)
+    end
+
+    def word(w)
+        make_parser {
+            syn{
+                w.each_char{|c|
+                    char c
+                }
+                %{ '#{w}' }
+            }
+        }.expected(w)
+    end
+
+    #######
+    private
+    #######
+    
+    def make_parser()
+        p = yield 
+        @ps << p
+        p.parent = self
+        def p.|(other)
+            r = Brancher.new(self, other)
+            ps = self.parent.ps
+            ps.pop
+            ps.pop
+            ps << r
+            return r
+        end
+        return p
+    end
+end
+
+def syn(&blc)
+    Binder.new(&blc)
+end
+
+class Closure
+    def initialize(scope)
+        for k, v in scope
+            eval %{
+                @#{k}='#{v}'
+            }
+        end
+    end
+    def get_binding
+        binding
+    end
+end
+def closure(scope)
+    Closure.new(scope).get_binding
+end
+
+
+
+class Returner < Parser
+    attr_reader :blc
+    def initialize(&blc)
+        @blc=blc
+    end
+    def check(input)
+        return ['', input]
     end
 end
 
@@ -50,44 +149,23 @@ class Brancher < Parser
         return [r1, rest] if r1
         r2, rest = @p2.check(input)
         return [r2, rest] if r2
-        return [nil, input]
+        return error(input, rest)
     end
 end
 
 def char(c)
-    return Atom.new{|ec| 
+    Atom.new{|ec| 
         ec==c
-    }
+    }.expected(c)
 end
 
-# 
-# p2 = syn {
-#   char 'a'
-#   char 'b'
-#   char 'c'
-# }
-class FreacDSL < Parser
-    def initialize(&blc)
-        @ps=[]
-        super()
-        
-        instance_eval(&blc) if blc
-    end
-    def check(input)
-        p = Binder.new(*@ps)
-        r, input, scope = result = p.check(input)
-        return result
-    end
-    def char(c)
-        def_parser { 
-            Atom.new{|ec| ec==c }
+def word(w)
+    syn{
+        w.each_char{|c|
+            char c
         }
-    end
-    def def_parser
-        p = yield 
-        @ps << p
-        return p
-    end
+        %{ '#{w}' }
+    }.expected(w)
 end
 
     
