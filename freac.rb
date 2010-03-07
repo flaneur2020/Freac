@@ -11,10 +11,20 @@ class Parser
     def check(input)
     end
 
-    def |(other)
+    def or (other)
         super(other) unless Parser === other 
-        Brancher.new(self, other)
+
+        r = Brancher.new(self, other)
+        if self.parent
+            ps = self.parent.ps
+            ps.pop
+            ps.pop
+            r.parent = self.parent
+            ps << r
+        end
+        return r
     end
+    alias / or 
 
     def expected(val=nil)
         if val
@@ -95,14 +105,6 @@ class Binder < Parser
         p = yield 
         @ps << p
         p.parent = self
-        def p.|(other)
-            r = Brancher.new(self, other)
-            ps = self.parent.ps
-            ps.pop
-            ps.pop
-            ps << r
-            return r
-        end
         return p
     end
 end
@@ -150,6 +152,11 @@ class Brancher < Parser
         r2, rest = @p2.check(input)
         return [r2, rest] if r2
         return error(input, rest)
+    end
+
+    def |(other)
+        r = Brancher.new(self, other)
+        return r
     end
 end
 

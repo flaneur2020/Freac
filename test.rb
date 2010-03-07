@@ -44,7 +44,7 @@ class FCTest < Test::Unit::TestCase
         ase ['a', ''], p3.check('a')
         ase [nil, 'x'], p3.check('x')[0..1]
 
-        p3 = char('a') | char('b')
+        p3 = char('a') / char('b')
         ase ['a', 'bblah'], p3.check('abblah')
         ase ['b', ''], p3.check('b')
         ase [nil, 'c'], p3.check('c')[0..1]
@@ -53,7 +53,7 @@ class FCTest < Test::Unit::TestCase
     def test_bra2
         p1 = word 'abc'
         p2 = word 'cba'
-        p3 = word('abc') | word('cba')
+        p3 = word('abc') / word('cba')
         ase 'abc', p3.check('abcd')[0]
         ase 'cba', p3.check('cbad')[0]
         ase nil, p3.check('cad')[0]
@@ -62,13 +62,13 @@ class FCTest < Test::Unit::TestCase
     def test_bra3
         p2 = word('abc')
         p3 = syn {
-            (word('abc') | word('bac') | word('bdc'))
+            :a <= word('abc') / word('cba') / word('orz')
+            :b <= word('xxx')
+            %{ @a+@b }
         }
-        puts p3
-        exit
         ase 'abc', p2.check('abc')[0]
-        ase 'abc', p3.check('abc')[0]
-        ase 'abc', p3.check('abcd')[0]
+        ase 'cbaxxx', p3.check('cbaxxx')[0]
+        ase nil, p3.check('abcd')[0]
     end
 
     def test_name
