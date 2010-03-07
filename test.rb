@@ -62,9 +62,10 @@ class FCTest < Test::Unit::TestCase
     def test_bra3
         p2 = word('abc')
         p3 = syn {
-            (word('abc') | word('bac'))
+            (word('abc') | word('bac') | word('bdc'))
         }
         puts p3
+        exit
         ase 'abc', p2.check('abc')[0]
         ase 'abc', p3.check('abc')[0]
         ase 'abc', p3.check('abcd')[0]
