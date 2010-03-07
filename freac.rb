@@ -107,6 +107,19 @@ class Binder < Parser
         p.parent = self
         return p
     end
+
+    class << self 
+        def define_parser(name)
+            class_eval %{
+                def #{name}(&blc)
+                    p = yield
+                    @ps << p
+                    p.parent = self
+                    return p
+                end
+            }
+        end
+    end
 end
 
 def syn(&blc)
