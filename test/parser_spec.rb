@@ -1,4 +1,5 @@
 $: << '../src/'
+require 'spec'
 require 'parser.rb'
 
 include Freac
