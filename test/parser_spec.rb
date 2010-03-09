@@ -66,3 +66,47 @@ describe Brancher do
         r.expected.should == ['a', 'b']
     end
 end
+
+describe Maybe do
+    a1 = Atom.new{|v| v=='a' }.expected('a')
+    p = Maybe.new(a1)
+
+    it 'should parse ok all the time' do
+        r=p.parse('a')
+        r.should be_ok
+        r.val.should == 'a'
+        r.input.should == ''
+
+        r=p.parse('b')
+        r.should be_ok
+        r.val.should == nil
+        r.input.should == 'b'
+    end
+end
+
+describe Many do
+    a1 = Atom.new{|v| v=='a' }.expected('a')
+    p = Many.new(a1)
+
+    it 'should parse ok all the time too' do
+        p.parse('a').should be_ok
+        p.parse('aaa').should be_ok
+        p.parse('aaaaaaaaaaa').should be_ok
+
+        str='aaa'
+        r=p.parse(str)
+        r.should be_ok
+        r.val.should == ['a', 'a', 'a'] 
+        r.input.should == ''
+
+        r=p.parse('aab')
+        r.should be_ok
+        r.val.should == ['a', 'a']
+        r.input.should == 'b'
+
+        r=p.parse('bb')
+        r.should be_ok
+        r.val.should == []
+        r.input.should == 'bb'
+    end
+end
