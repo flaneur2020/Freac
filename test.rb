@@ -68,6 +68,7 @@ class FCTest < Test::Unit::TestCase
         }
         ase 'abc', p2.check('abc')[0]
         ase 'cbaxxx', p3.check('cbaxxx')[0]
+        ase 'cbaxxx', p3.check('cbaxyx')
         ase nil, p3.check('abcd')[0]
     end
 

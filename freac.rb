@@ -25,6 +25,12 @@ class Parser
         return r
     end
     alias / or 
+    
+    def many
+        syn {
+            
+        }
+    end
 
     def expected(val=nil)
         if val
@@ -57,19 +63,22 @@ class Atom < Parser
 end
 
 class Binder < Parser
+    attr_accessor :ps
     def initialize(*ps, &blc)
         super()
         @ps = ps
         ret = instance_eval(&blc) if blc
         @ret_blc = ret if String === ret
     end
-    attr_accessor :ps
     def check(input)
         rest = input 
         scope = {}
         for p in @ps
             r, rest = result = p.check(rest)
-            return error(input, rest) if not r
+            if not r
+                result[1]=input
+                return result
+            end
             scope[p.name] = r if p.name
         end
         if @ret_blc
@@ -106,19 +115,6 @@ class Binder < Parser
         @ps << p
         p.parent = self
         return p
-    end
-
-    class << self 
-        def define_parser(name)
-            class_eval %{
-                def #{name}(&blc)
-                    p = yield
-                    @ps << p
-                    p.parent = self
-                    return p
-                end
-            }
-        end
     end
 end
 
