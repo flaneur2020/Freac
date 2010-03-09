@@ -1,6 +1,6 @@
 require 'test/unit'
 
-require 'freac.rb'
+require '../src/freac.rb'
 
 include Freac
 

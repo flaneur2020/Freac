@@ -1,12 +1,15 @@
 module Freac
 
     class ParseResult
-        def fail?
-            return true
+        def orz?
+            true
+        end
+        def ok?
+            not orz?
         end
     end
 
-    class Succ < ParseResult
+    class Ok < ParseResult
         attr_reader :val
         attr_reader :input
 
@@ -15,32 +18,32 @@ module Freac
             @input = input
         end
 
-        def fail?
+        def orz?
             return false
         end
     end
 
-    class Fail < ParseResult
+    class Orz < ParseResult
         attr :input
         attr :expected
         attr :inferer
 
-        def initialize(input, expected, inferer)
+        def initialize(input, inferer, expected=nil)
             @input = input
-            @expected = expected
             @inferer = inferer
+            @expected = expected
         end
 
-        def fail?
+        def orz?
             return true
         end
     end
 
-    def succ(*paras)
-        Succ.new(*paras)
+    def ok(*paras)
+        Ok.new(*paras)
     end
-    def fail(*paras)
-        Fail.new(*paras)
+    def orz(*paras)
+        Orz.new(*paras)
     end
 end
 

@@ -1,3 +1,5 @@
+require 'util.rb'
+
 module Freac
 
     class Parser
@@ -124,24 +126,6 @@ module Freac
         Binder.new(&blc)
     end
 
-    class Closure
-        def initialize(scope)
-            for k, v in scope
-                eval %{
-                @#{k}='#{v}'
-                }
-            end
-        end
-        def get_binding
-            binding
-        end
-    end
-    def closure(scope)
-        Closure.new(scope).get_binding
-    end
-
-
-
     class Returner < Parser
         attr_reader :blc
         def initialize(&blc)
@@ -165,10 +149,6 @@ module Freac
             return error(input, rest)
         end
 
-        def |(other)
-            r = Brancher.new(self, other)
-            return r
-        end
     end
 
     def char(c)
@@ -188,10 +168,4 @@ module Freac
 
 end
 
-class Symbol
-    def <=(other)
-        return super(other) if not Parser===other
-        other.name=self
-        return other
-    end
-end
+
