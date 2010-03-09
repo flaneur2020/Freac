@@ -2,6 +2,7 @@ require 'test/unit'
 
 require 'freac.rb'
 
+include Freac
 
 class FCTest < Test::Unit::TestCase
 
