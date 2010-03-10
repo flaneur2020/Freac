@@ -50,7 +50,7 @@ describe Binder do
     end
 
     it "should return an hash with int index" do
-        p.parse('ab').val.type.should == Hash
+        p.parse('ab').val.class.should == Hash
     end
 
     it "should return an hash with name if children have got any name" do

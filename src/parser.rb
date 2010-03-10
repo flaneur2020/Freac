@@ -77,7 +77,7 @@ module Freac
         def do_parse(input)
             rest = input 
             rval = {}
-            i=0
+            i=-1
             for p in @parsers
                 result = p.do_parse(rest)
                 rest = result.input

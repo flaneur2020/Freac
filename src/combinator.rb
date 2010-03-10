@@ -14,17 +14,20 @@ module Freac
             return Binder.new(*arr).expected(str).after{|v| str }
         end
         def one_of(str)
-            Atom.new{|v| str.include? v }.expected(str.split(//))
+            Atom.new{|v| str.include? v }.expected("[#{str}]")
+        end
+        def none_of(str)
+            Atom.new{|v| str.include? v}.expected("[^#{str}]")
         end
         def digit
-            one_of("012345678")
+            one_of("012345678").expected('a digit')
         end
         def number
             digit.many1.after{|v| v.values.join }
         end
     end
 
-    module Sugar
+    module Unary
         # quantifer
         def maybe
             Maybe.new(self)
@@ -38,6 +41,6 @@ module Freac
     end
 
     class Parser
-        include Sugar
+        include Unary
     end
 end
