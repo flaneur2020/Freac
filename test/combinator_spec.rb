@@ -62,5 +62,6 @@ describe Unary do
         p = digit / char('c')
         p.parse('1').should be_ok
         p.parse('c').should be_ok
+        p.parse('.').should be_orz
     end
 end
