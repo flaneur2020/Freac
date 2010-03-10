@@ -20,7 +20,7 @@ module Freac
             one_of("012345678")
         end
         def number
-            digit.many1.after{|v| v.join }
+            digit.many1.after{|v| v.values.join }
         end
     end
 

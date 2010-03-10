@@ -13,7 +13,7 @@ module Freac
         attr_reader :val
         attr_reader :input
 
-        def initialize(val, input)
+        def initialize(input, val)
             @val = val    
             @input = input
         end

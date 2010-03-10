@@ -13,7 +13,7 @@ module Freac
             return r if r.orz?
             return r if not @after_blc
             v=@after_blc.call(r.val) 
-            return ok(v, r.input)
+            return ok(r.input, v)
         end
         def after(&blc)
             @after_blc = blc 
@@ -25,6 +25,13 @@ module Freac
                 return self
             end
             return @expected
+        end
+        def name(sym)
+            if sym
+                @name = sym
+                return self
+            end
+            return @name
         end
     end
 
@@ -38,7 +45,7 @@ module Freac
 
             x, rest = [input[0..0], input[1..-1]]
             if @cond.call(x)
-                return ok(x, rest)
+                return ok(rest, x)
             else
                 return orz(input, x, self.expected)
             end
@@ -69,17 +76,18 @@ module Freac
         end
         def do_parse(input)
             rest = input 
-            rval = []
+            rval = {}
+            i=0
             for p in @parsers
                 result = p.do_parse(rest)
                 rest = result.input
                 if result.ok?
-                    rval << result.val
+                    rval[i+=1] = result.val
                 else
                     return orz(input, result.inferer, result.expected)
                 end
             end
-            return ok(rval, result.input)
+            return ok(result.input, rval)
         end
     end
 
@@ -93,7 +101,7 @@ module Freac
             if result.ok?
                 return result
             else
-                return ok(nil, input)
+                return ok(input, nil)
             end
         end
     end
@@ -111,7 +119,7 @@ module Freac
                     rval << result.val
                     rest = result.input
                 else 
-                    return ok(rval, rest)   
+                    return ok(rest, rval)   
                 end
             end
         end
