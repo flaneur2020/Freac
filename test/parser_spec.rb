@@ -48,6 +48,21 @@ describe Binder do
         r.expected.should == 'b'
         r.inferer.should == 'c'
     end
+
+    it "should return an hash with int index" do
+        p.parse('ab').val.type.should == Hash
+    end
+
+    it "should return an hash with name if children have got any name" do
+        a1.name(:a1)
+        a2.name(:a2)
+        p = Binder.new(a1, a2)
+
+        r=p.parse('ab')
+        r.should be_ok
+        r.val[:a1].should == 'a'
+        r.val[:a2].should == 'b'
+    end
 end
 
 describe Brancher do

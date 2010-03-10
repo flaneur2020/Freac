@@ -26,7 +26,7 @@ module Freac
             end
             return @expected
         end
-        def name(sym)
+        def name(sym=nil)
             if sym
                 @name = sym
                 return self
@@ -83,6 +83,7 @@ module Freac
                 rest = result.input
                 if result.ok?
                     rval[i+=1] = result.val
+                    rval[p.name] = result.val if p.name
                 else
                     return orz(input, result.inferer, result.expected)
                 end
@@ -90,8 +91,6 @@ module Freac
             return ok(result.input, rval)
         end
     end
-
-
 
     # ?
     class Maybe < Parser
