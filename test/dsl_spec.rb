@@ -14,6 +14,7 @@ describe ParserDSL do
         }.after{|v|
             v.values.join
         }
+        p.parsers.size.should == 2
         p.parse('ac').should be_orz
         r=p.parse('ab')
         r.should be_ok
@@ -27,6 +28,7 @@ describe ParserDSL do
         }.after{|v|
             v[:b]
         }
+        p.parsers.size.should == 2
         r=p.parse('ab')
         r.val.should == 'b'
     end

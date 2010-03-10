@@ -8,16 +8,21 @@ module Freac
             instance_eval &blc if blc
         end
 
-        def char(c)
-            p=Combinator::char(c)
-            @parsers << p
-            return p
-        end 
+        attr :parsers
+        Combinator.instance_methods.each{|m|
+            define_method(m){|*args|
+                p = Combinator::send(m, *args)
+                @parsers << p
+                p
+            }
+        }
     end
     def syn(&blc)
         ParserDSL.new(&blc)
     end
+end
 
+module EmptyModule 
 end
 
 class Symbol
