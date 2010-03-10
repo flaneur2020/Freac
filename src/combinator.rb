@@ -40,7 +40,14 @@ module Freac
         end
     end
 
+    module Binary
+        def /(other)
+            Brancher.new(self, other)
+        end
+    end
+
     class Parser
         include Unary
+        include Binary
     end
 end

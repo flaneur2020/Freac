@@ -49,5 +49,18 @@ describe Combinator do
         r.should be_ok
         r.val.should == '1234'
     end
+end
 
+describe Unary do
+    it "could transform a parser into another" do
+        p = digit.many1
+        p.parse('123').should be_ok
+        p.parse('d23').should be_orz
+    end
+
+    it "/ cound make a brancher" do
+        p = digit / char('c')
+        p.parse('1').should be_ok
+        p.parse('c').should be_ok
+    end
 end
