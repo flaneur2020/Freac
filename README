@@ -5,8 +5,9 @@ you could make a parser like this:
 ```
 p = syn {
     char('a').many
+    :v <= char('b').many
 }.after{|v|
-    v.join
+    v[:v].join
 }
-p.parse('aaaaaaaaa').val #=> 'aaaaaaaaa'
+p.parse('aaaaaaaaabbb').val #=> 'bbb'
 ```
