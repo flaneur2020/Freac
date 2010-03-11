@@ -30,8 +30,8 @@ module Freac
                 if @parent
                     @parent.parsers.pop
                     @parent.parsers << p
+                    p.parent=@parent
                 end
-                p.parent=self
                 p
             }
         }
@@ -42,8 +42,8 @@ module Freac
                     @parent.parsers.pop
                     @parent.parsers.pop
                     @parent.parsers << p
+                    p.parent=@parent
                 end
-                p.parent=self
                 p
             }
         }

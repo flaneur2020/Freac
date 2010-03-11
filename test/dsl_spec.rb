@@ -33,7 +33,7 @@ describe ParserDSL do
         r.val.should == 'b'
     end
 
-    it "binary combinators " do
+    it "binary combinators like / can bind two combinators" do
         p = syn {
             :c <= char('a') / char('b')
         }.after{|v|
@@ -45,4 +45,26 @@ describe ParserDSL do
         p.parse('b').val.should =='b'
         p.parse('c').should be_orz
     end
+
+    it "unary combinators can transform a parser" do
+        p = syn {
+            char('a').many
+            :v <= char('b').many
+        }.after{|v|
+            v[:v].join
+        }
+        p.parsers.size.should == 2
+        r=p.parse('aaaaaaaaaaaaabbb')
+        r.should be_ok
+        r.val.should == 'bbb'
+    end
+    
+    it "binary combinators and unarys can works together well" do
+        p = syn {
+            char('a').many / (char('b').many)
+        }
+        p.parse('aaaaaaaaa').should be_ok
+        p.parse('bbbbbbbbbbbb').should be_ok
+    end
+    
 end
