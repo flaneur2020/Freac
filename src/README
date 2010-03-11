@@ -1,0 +1,12 @@
+a parser like parsec but in ruby
+
+you could make a parser like this:
+
+```
+p = syn {
+    char('a').many
+}.after{|v|
+    v.join
+}
+p.parse('aaaaaaaaa').val #=> 'aaaaaaaaa'
+```
