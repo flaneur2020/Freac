@@ -32,4 +32,17 @@ describe ParserDSL do
         r=p.parse('ab')
         r.val.should == 'b'
     end
+
+    it "binary combinators " do
+        p = syn {
+            :c <= char('a') / char('b')
+        }.after{|v|
+            v[:c]
+        }
+        r=p.parse('a')
+        r.should be_ok
+        r.val.should=='a'
+        p.parse('b').val.should =='b'
+        p.parse('c').should be_orz
+    end
 end

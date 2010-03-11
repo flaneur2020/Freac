@@ -13,12 +13,41 @@ module Freac
             define_method(m){|*args|
                 p = Combinator::send(m, *args)
                 @parsers << p
+                p.parent=self
                 p
             }
         }
     end
     def syn(&blc)
         ParserDSL.new(&blc)
+    end
+
+    class Parser
+        attr_accessor :parent
+        Unary.singleton_methods.each{|m|
+            define_method(m){|*args|
+                p = Unary.send(m, self)
+                if @parent
+                    @parent.parsers.pop
+                    @parent.parsers << p
+                end
+                p.parent=self
+                p
+            }
+        }
+        Binary.singleton_methods.each{|m|
+            define_method(m){|*args|
+                p=Binary.send(m, *([self]+args))
+                if @parent
+                    @parent.parsers.pop
+                    @parent.parsers.pop
+                    @parent.parsers << p
+                end
+                p.parent=self
+                p
+            }
+        }
+        alias / or
     end
 end
 

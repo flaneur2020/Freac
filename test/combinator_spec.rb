@@ -58,8 +58,8 @@ describe Unary do
         p.parse('d23').should be_orz
     end
 
-    it "/ cound make a brancher" do
-        p = digit / char('c')
+    it "or cound make a brancher" do
+        p = digit.or char('c')
         p.parse('1').should be_ok
         p.parse('c').should be_ok
         p.parse('.').should be_orz

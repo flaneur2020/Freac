@@ -29,25 +29,36 @@ module Freac
 
     module Unary
         # quantifer
-        def maybe
-            Maybe.new(self)
+        def maybe(p)
+            Maybe.new(p)
         end
-        def many
-            Many.new(self)
+        def many(p)
+            Many.new(p)
         end
-        def many1
-            Binder.new(self, Many.new(self))
+        def many1(p)
+            Binder.new(p, Many.new(p))
         end
+        module_function :maybe, :many, :many1
     end
 
     module Binary
-        def /(other)
-            Brancher.new(self, other)
+        def or(p, other)
+            Brancher.new(p, other)
         end
+        module_function :or
     end
 
     class Parser
-        include Unary
-        include Binary
+        Unary.singleton_methods.each{|m|
+            define_method(m){|*args|
+                Unary.send(m, self)
+            }
+        }
+        Binary.singleton_methods.each{|m|
+            define_method(m){|*args|
+                Binary.send(m, *([self]+args))
+            }
+        }
     end
 end
+
