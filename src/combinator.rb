@@ -29,6 +29,7 @@ module Freac
 
     module Unary
         # quantifer
+        module_function
         def maybe(p)
             Maybe.new(p)
         end
@@ -38,14 +39,13 @@ module Freac
         def many1(p)
             Binder.new(p, Many.new(p))
         end
-        module_function :maybe, :many, :many1
     end
 
     module Binary
+        module_function 
         def or(p, other)
             Brancher.new(p, other)
         end
-        module_function :or
     end
 
     class Parser
