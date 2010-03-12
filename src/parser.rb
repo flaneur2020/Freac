@@ -98,6 +98,9 @@ module Freac
             return ok(result.input, rval)
         end
     end
+    def syn(*args)
+        Binder.new(*args)
+    end
 
     # ?
     class Maybe < Parser

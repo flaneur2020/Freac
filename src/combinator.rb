@@ -55,9 +55,6 @@ module Freac
         include Binary
     end 
 
-    def syn(*args)
-        Binder.new(*args)
-    end
 end
 
 class Symbol
