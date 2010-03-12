@@ -6,7 +6,7 @@ require 'dsl.rb'
 
 include Freac
 
-describe ParserDSL do
+describe Freac do
     it "could combinate parsers" do
         p = syn(
             char('a'),
