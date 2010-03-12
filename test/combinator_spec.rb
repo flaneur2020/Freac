@@ -65,3 +65,11 @@ describe Unary do
         p.parse('.').should be_orz
     end
 end
+
+describe Binary do
+    it "chain combine parsers into a chain" do
+        p = char('1').chain char('+')
+        p.parse('1+1').should be_ok
+            
+    end
+end
