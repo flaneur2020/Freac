@@ -25,6 +25,7 @@ describe Atom do
         r.expected.should == 'c'
         r.inferer.should == 'v'
     end
+
 end
 
 describe Binder do
@@ -62,6 +63,17 @@ describe Binder do
         r.should be_ok
         r.val[:a2].should == 'b'
         r.val[:a1].should == 'a'
+    end
+
+    it "rets could be linked together" do
+        p = Binder.new(a1.name(:a1), a2.name(:a2)).ret{|v|
+            v[:a1]+='~'
+            v
+        }.ret{|v|
+            v[:a1]+='~'
+            v
+        }
+        p.parse('ab').val[:a1].should == 'a~~'
     end
 end
 

@@ -7,6 +7,7 @@ include Freac
 include Freac::Combinator
 
 describe Combinator do
+    
     it "string should parse a string ok" do
         p = string 'abc'
         p.parse('abc').should be_ok
