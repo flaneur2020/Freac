@@ -23,7 +23,7 @@ module Freac
             one_of("012345678").expected('a digit')
         end
         def number
-            digit.many1.ret{|v| v.join }
+            digit.many1.ret{|v| v.join }.expected('a number')
         end
     end
 
