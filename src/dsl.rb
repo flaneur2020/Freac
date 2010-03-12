@@ -8,7 +8,6 @@ module Freac
             instance_eval &blc if blc
         end
 
-        attr :parsers
         Combinator.instance_methods.each{|m|
             define_method(m){|*args|
                 p = Combinator::send(m, *args)
@@ -18,8 +17,8 @@ module Freac
             }
         }
     end
-    def syn(&blc)
-        ParserDSL.new(&blc)
+    def syn(*args)
+        Binder.new(*args)
     end
 
     class Parser

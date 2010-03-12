@@ -70,6 +70,7 @@ module Freac
 
     # >>
     class Binder < Parser
+        attr :parsers
         def initialize(*parsers)
             super()
             @parsers = parsers
