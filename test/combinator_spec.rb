@@ -13,6 +13,7 @@ describe Combinator do
         r=p.parse('abcd')
         r.should be_ok
         r.input.should == 'd'
+        r.val.should == 'abc'
 
         r=p.parse('acc')
         r.should be_orz
@@ -66,10 +67,4 @@ describe Unary do
     end
 end
 
-describe Binary do
-    it "chain combine parsers into a chain" do
-        p = char('1').chain char('+')
-        p.parse('1+1').should be_ok
-            
-    end
-end
+

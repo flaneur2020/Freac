@@ -23,7 +23,7 @@ module Freac
             one_of("012345678").expected('a digit')
         end
         def number
-            digit.many1.after{|v| v.values.join }
+            digit.many1.ret{|v| v.join }
         end
     end
 
@@ -37,7 +37,9 @@ module Freac
             Many.new(self)
         end
         def many1
-            Binder.new(self, Many.new(self))
+            Binder.new(self, Many.new(self)).ret{|v|
+                [v.values[0]]+v.values[1]
+            }
         end
     end
 
@@ -46,19 +48,6 @@ module Freac
             Brancher.new(self, other)
         end
         alias / or
-        def chain(op)
-            Binder.new(
-                :x <= self,
-                :xs <= Binder.new(
-                    :op <= op,
-                    :p  <= self
-                ).ret{|v|
-                    v.values.join
-                }
-            ).ret{|v|
-                v[:x] + v[:xs]
-            }
-        end
     end
 
     class Parser
@@ -76,6 +65,6 @@ class Symbol
         unless Parser === other
             return super(other) 
         end
-        other.name(self)
+        other.clone.name(self)
     end
 end

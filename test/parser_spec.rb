@@ -54,14 +54,14 @@ describe Binder do
     end
 
     it "should return an hash with name if children have got any name" do
-        a1.name(:a1)
-        a2.name(:a2)
-        p = Binder.new(a1, a2)
+        p = Binder.new(a1.name(:a1), a2.name(:a2)).ret{|v|
+            v
+        }
 
         r=p.parse('ab')
         r.should be_ok
-        r.val[:a1].should == 'a'
         r.val[:a2].should == 'b'
+        r.val[:a1].should == 'a'
     end
 end
 

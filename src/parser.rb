@@ -3,22 +3,25 @@ require 'parse_result.rb'
 module Freac
 
     class Parser
-        def initialize
+        def initialize(&blc)
             @expected = nil
-            @after_blc = nil
+            @after_blcs = []
         end
         def parse(input)
             r=self.do_parse(input)
 
             return r if r.orz?
-            return r if not @after_blc
-            v=@after_blc.call(r.val) 
+            return r if not @after_blcs
+            v=@after_blcs.inject(r.val){|acc, f|
+                f.call(acc)
+            }
             return ok(r.input, v)
         end
         def after(&blc)
-            @after_blc = blc 
+            @after_blcs << blc 
             return self
         end
+        alias ret after
         def expected(str=nil)
             if str
                 @expected = str
@@ -28,8 +31,11 @@ module Freac
         end
         def name(sym=nil)
             if sym
+                tmp = @name
                 @name = sym
-                return self
+                r = self.clone
+                @name = tmp
+                return r
             end
             return @name
         end
@@ -61,7 +67,7 @@ module Freac
         end
         def do_parse(input)
             for p in @parsers
-                result = p.do_parse(input)
+                result = p.parse(input)
                 return result if result.ok?
             end
             return orz(input, result.inferer, self.expected)
@@ -80,7 +86,7 @@ module Freac
             rval = {}
             i=-1
             for p in @parsers
-                result = p.do_parse(rest)
+                result = p.parse(rest)
                 rest = result.input
                 if result.ok?
                     rval[i+=1] = result.val
@@ -99,7 +105,7 @@ module Freac
             @parser=p
         end
         def do_parse(input)
-            result = @parser.do_parse(input)
+            result = @parser.parse(input)
             if result.ok?
                 return result
             else
@@ -116,7 +122,7 @@ module Freac
             rest=input
             rval=[]
             while true
-                result=@parser.do_parse(rest)
+                result=@parser.parse(rest)
                 if result.ok?
                     rval << result.val
                     rest = result.input
