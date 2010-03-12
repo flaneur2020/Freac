@@ -46,11 +46,36 @@ module Freac
             Brancher.new(self, other)
         end
         alias / or
+        def chain(op)
+            Binder.new(
+                :x <= self,
+                :xs <= Binder.new(
+                    :op <= op,
+                    :p  <= self
+                ).ret{|v|
+                    v.values.join
+                }
+            ).ret{|v|
+                v[:x] + v[:xs]
+            }
+        end
     end
 
     class Parser
         include Unary
         include Binary
+    end 
+
+    def syn(*args)
+        Binder.new(*args)
     end
 end
 
+class Symbol
+    def <=(other)
+        unless Parser === other
+            return super(other) 
+        end
+        other.name(self)
+    end
+end
