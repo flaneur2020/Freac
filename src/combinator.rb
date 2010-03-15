@@ -13,6 +13,8 @@ module Freac
             }
             return Binder.new(*arr).expected(str).after{|v| str }
         end
+        alias sym string
+
         def one_of(str)
             Atom.new{|v| str.include? v }.expected("[#{str}]")
         end
@@ -25,6 +27,7 @@ module Freac
         def number
             digit.many1.ret{|v| v.join }.expected('a number')
         end
+
     end
 
     module Unary
@@ -48,11 +51,34 @@ module Freac
             Brancher.new(self, other)
         end
         alias / or
+
+        def chain(other)
+            Binder.new(
+                :x  <= self, 
+                :xs <= syn(
+                    :op <= other, 
+                    :x <= self
+                ).ret{|v|
+                    [v[:op], v[:x]]
+                }.many
+            ).ret{|v|
+                t1 = v[:x]
+                v[:xs].each{|i|
+                    op, t2 = i
+                    t1 = op.call(t1, t2)
+                }
+                t1
+            }
+        end
     end
 
     class Parser
         include Unary
         include Binary
+
+        def lazy(&blc)
+            return lambda { blc.call }
+        end
     end 
 
 end

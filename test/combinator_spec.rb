@@ -66,6 +66,29 @@ describe Unary do
         p.parse('c').should be_ok
         p.parse('.').should be_orz
     end
+
+    it "chain counld make a chain" do
+        p=number.chain(string("+").ret{ lambda{|a,b| a.to_i+b.to_i } })
+        r=p.parse('1+2+3')
+        r.should be_ok
+        r.val.should == 6
+    end
+
+    it "have a try of arithmetic?" do
+        mulop =
+            sym("*").ret{ lambda{|a,b| a.to_i*b.to_i } } /
+            sym("/").ret{ lambda{|a,b| a.to_i/b.to_i } }
+        addop = 
+            sym('+').ret{ lambda{|a,b| a.to_i+b.to_i} } /
+            sym('-').ret{ lambda{|a,b| a.to_i-b.to_i} } 
+
+        factor = number
+        term = factor.chain mulop
+        expr = term.chain addop
+        r=expr.parse('1+2*3')
+        r.should be_ok
+        r.val.should == 7
+    end
 end
 
 
