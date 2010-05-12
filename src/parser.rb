@@ -86,6 +86,7 @@ module Freac
       rest = input 
       rval = {}
       i=-1
+      raise 'Null Parser' if @parsers == []
       for p in @parsers
         result = p.parse(rest)
         rest = result.input
