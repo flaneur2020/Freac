@@ -1,5 +1,6 @@
 module Freac
   module Combinator
+    module_function
     def any_char
       return Atom.new{|v| true }.expected('.')
     end

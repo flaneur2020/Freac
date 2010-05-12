@@ -37,6 +37,9 @@ describe DSL do
       syn :ab do |_|
         _.a
         _.b
+        _.ret{
+          'orz'
+        }
       end
       syn :a do |_|
         _.char('a')
@@ -47,6 +50,7 @@ describe DSL do
     end
     r = @p.ab.parse('ab')
     r.should be_ok
+    r.val.should == 'orz'
   end
 end
 
