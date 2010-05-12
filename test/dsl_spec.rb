@@ -52,6 +52,22 @@ describe DSL do
     r.should be_ok
     r.val.should == 'orz'
   end
+
+  it 'or works well' do
+    @p = freac do
+      syn :a_b do |_|
+        _.char('a') >> :a
+        _.char('b') >> :b
+        _.ret {|v|
+          v[:b] + v[:a]
+        }
+      end
+    end
+    r = @p.a_b.parse('ab')
+    r.should be_ok
+    r.val.should == 'ba'
+
+  end
 end
 
 

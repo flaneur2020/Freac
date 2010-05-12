@@ -30,11 +30,8 @@ module Freac
     end
     def name(sym=nil)
       if sym
-        tmp = @name
         @name = sym
-        r = self.clone
-        @name = tmp
-        return r
+        return self
       end
       return @name
     end
